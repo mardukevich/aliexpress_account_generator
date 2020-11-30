@@ -2,7 +2,7 @@ from time import sleep
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
-from utils import get_logger, get_proxy, generate_email, generate_password
+from tools.utils import get_logger, get_proxy, generate_email, generate_password
 
 
 class Autoreger:
@@ -35,18 +35,18 @@ class Autoreger:
             self.__run_browser(proxy)
             self.__load_page("https://login.aliexpress.com/")
             self.__click_on_register_tab()
+
             email = generate_email('gmail.com')
             self.__enter_email(email)
+
             password = generate_password()
             self.__enter_password(password)
+
             self.__move_scrollbar()
             self.__click_on_register_button()
-            if self.__register():
+            if self.__is_register():
                 self.__save_account(email, password)
         except (NoSuchElementException, RuntimeError) as err:
-            self.__logger.exception(err)
-        except Exception as err:
-            self.__logger.warning('UNKNOWN EXCEPTION!')
             self.__logger.exception(err)
         finally:
             self.__close_browser()
@@ -99,7 +99,7 @@ class Autoreger:
         register_button.click()
         self.__logger.info('Register button clicked')
 
-    def __register(self):
+    def __is_register(self):
         old_title = self.__browser.title
         register_tab = self.__browser.find_element_by_class_name("login-container") \
                                      .find_element_by_tag_name("ul") \
@@ -110,13 +110,15 @@ class Autoreger:
     def __close_browser(self):
         self.__browser.close()
 
-def main():
-    logger = get_logger('file.log', name='ali')
+def generate_accounts(number, logger):
     autoreger = Autoreger('files/accounts.txt', logger)
     autoreger.register_account(proxy=get_proxy())
-    number_of_accounts = 300
-    for _ in range(number_of_accounts):
+    for _ in range(number):
         autoreger.register_account(proxy=get_proxy())
 
 if __name__ == "__main__":
-    main()
+    logger = get_logger('file.log', name='ali')
+    try:
+        generate_accounts(500, logger)
+    except Exception as err:
+        logger.exception(err)
