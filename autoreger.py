@@ -23,8 +23,7 @@ class Autoreger:
                 }
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--incognito")
-        self.__browser = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver",
-                                          options=chrome_options)
+        self.__browser = webdriver.Chrome(options=chrome_options)
         self.__logger.info('Login page is loaded')
 
     def __load_page(self, url):
@@ -87,7 +86,7 @@ class Autoreger:
         except NoSuchElementException:
             self.__logger.info('Scrollbar did not appear')
         else:
-            x_offset = scrollbar.location.get("x") + 5
+            x_offset = scrollbar.location.get("x")
             y_offset = scrollbar.location.get("y")
             webdriver.ActionChains(self.__browser).click_and_hold(scrollbar).\
                 move_by_offset(x_offset, y_offset).release().perform()
@@ -112,7 +111,6 @@ class Autoreger:
 
 def generate_accounts(number, logger):
     autoreger = Autoreger('files/accounts.txt', logger)
-    autoreger.register_account(proxy=get_proxy())
     for _ in range(number):
         autoreger.register_account(proxy=get_proxy())
 
