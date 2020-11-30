@@ -1,6 +1,6 @@
 # aliexpress_account_generator
 This program registers aliexpress accounts using selenium.
-Mail and password are generated automatically and save to files/accounts.txt
+Email and password are generated automatically and save to files/accounts.txt
 # requirements
 ```
 pip3 install selenium http_request_randomizer
